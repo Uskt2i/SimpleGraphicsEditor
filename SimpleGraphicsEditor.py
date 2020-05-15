@@ -29,19 +29,10 @@ class UIGraphicsEditorWidget(QtWidgets.QMainWindow):
         #self.ui.lineEdit.setText("Hello World")
     def clickbtn(self):
         print("Push")
-        #print(img)
-        #img=cv_test.openPic
-        get_img=self.ui.graphicsView.QtGui.QImage()
-        # 押したときの動作
-        #print(self.ui.lineEdit.text())
-    def clicktoolbtn(self):
-        path = QtWidgets.QFileDialog().getOpenFileName()
-        #if path != "":
-            #self.ui.lineEdit.setText(path)
-    def open(self):
-        cv_testopen=OpencvProcessing()
-        img_file = QtWidgets.QFileDialog().getOpenFileName(self,"Select image file to open")
-        img=cv_testopen.openPic(img_file[0])
+        print(self.file[0])
+        img=cv2.imread(self.file[0])
+        testcv=OpencvProcessing()
+        img=testcv.gain(img,2.0)
         height,width,channels=img.shape
         bytesPerLine = channels * width
         img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
@@ -49,6 +40,32 @@ class UIGraphicsEditorWidget(QtWidgets.QMainWindow):
         scene=QtWidgets.QGraphicsScene()
         scene.addPixmap(QtGui.QPixmap.fromImage(Qtimage))
         self.ui.graphicsView.setScene(scene)
+    def clicktoolbtn(self):
+        path = QtWidgets.QFileDialog().getOpenFileName()
+        #if path != "":
+            #self.ui.lineEdit.setText(path)
+    def open(self):
+        #cv_testopen=OpencvProcessing()
+        self.file = QtWidgets.QFileDialog().getOpenFileName()
+        
+        pic_Item=QtWidgets.QGraphicsPixmapItem(QtGui.QPixmap(self.file[0]))
+        print(self.file[0])
+        img=cv2.imread(self.file[0])
+        height,width,channels=img.shape
+        bytesPerLine = channels * width
+        img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        Qtimage=QtGui.QImage(img.data,width,height,bytesPerLine, QtGui.QImage.Format_RGB888)
+        scene=QtWidgets.QGraphicsScene()
+        scene.addPixmap(QtGui.QPixmap.fromImage(Qtimage))
+        self.ui.graphicsView.setScene(scene)
+        #img=c(self.file[0])
+        # height,width,channels=img.shape
+        # bytesPerLine = channels * width
+        # img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        # Qtimage=QtGui.QImage(img.data,width,height,bytesPerLine, QtGui.QImage.Format_RGB888)
+        # scene=QtWidgets.QGraphicsScene()
+        # scene.addPixmap(QtGui.QPixmap.fromImage(Qtimage))
+        # self.ui.graphicsView.setScene(scene)
     def save(self):
         print("save")
     def Exit(self):
