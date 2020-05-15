@@ -7,14 +7,13 @@ QGraphicsView{
 QLabel{
     color: #ffffff;
 }
-QSlider::groove:horizontal{
-    
-    color: #ffffff;
+QSlider::groove:horizontal {
+
 }
 QMenu{
-    background-color: #1b1b1b;
+    background-color: #2e2e2e;
     color: #ffffff;
 }
 QMenuBar {
-
+    background-color: #e6e6e6;
 }
