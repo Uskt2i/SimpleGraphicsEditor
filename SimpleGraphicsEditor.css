@@ -1,0 +1,20 @@
+QMainWindow{
+    background-color: #222222;
+}
+QGraphicsView{
+    background-color: #3d3d3d;
+}
+QLabel{
+    color: #ffffff;
+}
+QSlider::groove:horizontal{
+    
+    color: #ffffff;
+}
+QMenu{
+    background-color: #1b1b1b;
+    color: #ffffff;
+}
+QMenuBar {
+
+}

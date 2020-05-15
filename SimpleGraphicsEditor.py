@@ -19,69 +19,65 @@ class UIGraphicsEditorWidget(QtWidgets.QMainWindow):
         self.ui = QUiLoader().load(os.path.join(CURRENT_PATH, 'SimpleGraphicsEditor.ui'))
         self.setCentralWidget(self.ui)
         self.setWindowTitle("Simple Graphics Editor")
+        self.setCSS()
+
+        self.ui.lineEditGain.setText('1.0')
         # Signal作成
-        self.ui.pushButton.clicked.connect(self.clickbtn)
+        self.ui.pushButtonExcute.clicked.connect(self.clickbtn)
+
+        self.ui.horizontalSliderGain.valueChanged.connect(self.sliderValueChangeGain)
+        self.ui.lineEditGain.textChanged.connect(self.changeText)
 
         self.ui.action_Open.triggered.connect(self.open)
         self.ui.action_Save.triggered.connect(self.save)
-        self.ui.actionExit.triggered.connect(self.Exit)
-        #self.ui.toolButton.clicked.connect(self.clicktoolbtn)
-        #self.ui.lineEdit.setText("Hello World")
+        self.ui.actionExit.triggered.connect(self.exit)
+        self.ui.actionAbout.triggered.connect(self.about)
+    def sliderValueChangeGain(self):
+        view_num=float(self.ui.horizontalSliderGain.value())/100
+        self.ui.lineEditGain.setText(str(view_num))
+    def changeText(self,text):
+        edit_num=float(text)*100
+        #self.ui.horizontalSliderGain.value(int(edit_num))
     def clickbtn(self):
-        print("Push")
-        print(self.file[0])
-        img=cv2.imread(self.file[0])
-        testcv=OpencvProcessing()
-        img=testcv.gain(img,2.0)
-        height,width,channels=img.shape
-        bytesPerLine = channels * width
-        img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-        Qtimage=QtGui.QImage(img.data,width,height,bytesPerLine, QtGui.QImage.Format_RGB888)
-        scene=QtWidgets.QGraphicsScene()
-        scene.addPixmap(QtGui.QPixmap.fromImage(Qtimage))
-        self.ui.graphicsView.setScene(scene)
-    def clicktoolbtn(self):
-        path = QtWidgets.QFileDialog().getOpenFileName()
-        #if path != "":
-            #self.ui.lineEdit.setText(path)
+
+        gain_value=float(self.ui.lineEditGain.text())
+        cv_test=OpencvProcessing()
+        self.adjustimg=cv_test.gain(self.img,gain_value)
+        self.updataImage(self.adjustimg)
+
     def open(self):
-        #cv_testopen=OpencvProcessing()
         self.file = QtWidgets.QFileDialog().getOpenFileName()
-        
-        pic_Item=QtWidgets.QGraphicsPixmapItem(QtGui.QPixmap(self.file[0]))
-        print(self.file[0])
-        img=cv2.imread(self.file[0])
-        height,width,channels=img.shape
+        self.img=cv2.imread(self.file[0])
+        self.updataImage(self.img)
+
+    def updataImage(self,updata_img):
+        height,width,channels=updata_img.shape
         bytesPerLine = channels * width
-        img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-        Qtimage=QtGui.QImage(img.data,width,height,bytesPerLine, QtGui.QImage.Format_RGB888)
+        convert_img=cv2.cvtColor(updata_img,cv2.COLOR_BGR2RGB)
+        Qtimage=QtGui.QImage(convert_img.data,width,height,bytesPerLine, QtGui.QImage.Format_RGB888)
         scene=QtWidgets.QGraphicsScene()
         scene.addPixmap(QtGui.QPixmap.fromImage(Qtimage))
         self.ui.graphicsView.setScene(scene)
-        #img=c(self.file[0])
-        # height,width,channels=img.shape
-        # bytesPerLine = channels * width
-        # img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-        # Qtimage=QtGui.QImage(img.data,width,height,bytesPerLine, QtGui.QImage.Format_RGB888)
-        # scene=QtWidgets.QGraphicsScene()
-        # scene.addPixmap(QtGui.QPixmap.fromImage(Qtimage))
-        # self.ui.graphicsView.setScene(scene)
+
     def save(self):
         print("save")
-    def Exit(self):
+        file_name= QtWidgets.QFileDialog().getSaveFileName()
+        print(file_name)
+        save_file=file_name[0]
+        cv2.imwrite(save_file,self.adjustimg)
+        QMessageBox.information(self, "Message", "Save File [ "+save_file+" ]")
+
+    def exit(self):
         self.close()
+    def about(self):
+        QMessageBox.information(self, "About", "Version 1.01")
+    def setCSS(self):
+        open_file=os.path.join(CURRENT_PATH, 'SimpleGraphicsEditor.css')
+        with open(open_file,"r") as f:
+            self.setStyleSheet("".join(f.readlines()))
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = UIGraphicsEditorWidget()
-    #window.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
-    #window.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
-    #import stylesheet
-    #style_filename="SimpleGraphicsEditor.qss"
-    open_file=open(os.path.join(CURRENT_PATH, 'SimpleGraphicsEditor.qss'), 'r')
-    style_data = open_file.read()
-    open_file.close
-    window.setStyleSheet(style_data)
-
     window.show()
     sys.exit(app.exec_())
