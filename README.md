@@ -1,2 +1,4 @@
 # SimpleGraphicsEditor
-Edit image file
+Edit image fil
+
+![GUI](./images/simpleGraphicsEditor.png)
